@@ -1,0 +1,22 @@
+name: Delivery Manual - Query Prometheus
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Start containers with docker-compose
+        run: docker-compose up -d
+
+      - name: Wait for Prometheus to be ready
+        run: sleep 30
+
+      - name: Query Prometheus for DB healthcheck
+        run: |
+          curl "http://localhost:9090/api/v1/query?query=healthcheck_status{name=\"sql\"}"
